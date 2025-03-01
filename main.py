@@ -3,7 +3,14 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import random
+import math
 
+def merge_slices(list0, list1):
+    from collections import defaultdict
+    dict_slices = defaultdict(lambda: 0)
+    for val, title in zip(list0, list1):
+        dict_slices[title] += val
+    return list(dict_slices.values()), list(dict_slices.keys())
 thing = dict()
 
 weekly, monthly, annually = st.tabs(["Weekly", "Monthly","Annually"])
@@ -27,6 +34,23 @@ data_df = pd.DataFrame(
     }
 )
 
+st.markdown(
+        """
+        <style>
+        .stMainBlocContainer {
+            max-width:100%;
+            width: 95%;
+        }
+
+        .st-emotion-cache-mtjnbi {
+          width: 100%;
+          padding: 6rem 1rem 10rem;
+          max-width: 75%;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+)
 
 with weekly.container(border=True):
     col1, col2, col3 = weekly.columns(3, border = True)
@@ -54,17 +78,28 @@ with weekly.container(border=True):
 
     with col6:
         col6.subheader("Expenses this week")
-        col6.data_editor(
+        r = col6.data_editor(
             data_df,
             hide_index=True,
+            num_rows="dynamic",
         )
+
+        prices = r["Price"]
+        categories = r["Category"]
     with col7:
+        
         labels = categories
-        sizes = prices
-        explode = (0, 0, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+        cleanse = lambda x: x if not math.isnan(x)  else 0;
+
+        sizes = [cleanse(x) for x in prices]
+
+        sizes2, labels2 = merge_slices(sizes, labels)
+
         
         fig1, ax1 = plt.subplots()
-        ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',startangle=90)
+        #ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)
+        ax1.pie(sizes2, labels=labels2, startangle=90)
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         col7.pyplot(fig1)
+
 
