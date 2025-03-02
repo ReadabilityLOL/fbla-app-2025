@@ -7,6 +7,9 @@ import math
 import datetime
 from openai import OpenAI
 
+api_key = "7"
+
+
 def merge_slices(list0, list1):
     from collections import defaultdict
     dict_slices = defaultdict(lambda: 0)
@@ -17,6 +20,9 @@ thing = dict()
 
 weekly, monthly, yearly = st.tabs(["Weekly", "Monthly","Annually"])
 
+debt = 100000
+average_spending = 770
+income = 880
 
 random2 = random.randint(5,10)
 dates = range(2019, 2019+random2)
@@ -38,6 +44,7 @@ data_df = pd.DataFrame(
         "Date":dates,
     }
 )
+
 
 st.markdown(
         """
@@ -64,18 +71,15 @@ with weekly.container(border=True):
 
     with col1:
         col1.markdown("###### Total Debt");
-        col1.markdown("## $999999");
-        col1.markdown("*0.5% interest per month*");
+        col1.markdown(f"## ${debt}");
 
     with col2:
         col2.markdown("###### Average Spending");
-        col2.markdown("## $77");
-        col2.markdown("*+3% from last month*");
+        col2.markdown(f"## ${average_spending}");
 
     with col3:
         col3.markdown("###### Income");
-        col3.markdown("## $888");
-        col3.markdown("*+6% from last month*");
+        col3.markdown(f"## ${income}");
 
     with col4:
         col4.subheader("Net Worth over Time")
@@ -86,7 +90,7 @@ with weekly.container(border=True):
         client = OpenAI(api_key=api_key)
         
         if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
+            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant on our Finance Website"}]
         
         col5.title("Chat with AI-CoPilot")
         
@@ -94,8 +98,10 @@ with weekly.container(border=True):
         monthly_expenses = st.session_state.get("expenses", 0.0)
         
         financial_context = (
-            f"Total Debt: ${total_debt}\n"
-            f"Monthly Expenses: ${monthly_expenses}\n"
+            f"Transactions: ${data_df}"
+            f"Total debt: ${debt}"
+            f"Average Spending: ${average_spending}"
+            f"Income: ${income}"
             "Consider this information when providing responses."
         )
         st.session_state["messages"][0]["content"] = financial_context
