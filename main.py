@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 import random
 import math
 import datetime
+from openai import OpenAI
 
 def merge_slices(list0, list1):
     from collections import defaultdict
@@ -182,6 +183,10 @@ with yearly.container(border=True):
         col4.subheader("Net Worth over Time")
         col4.line_chart(thing,x_label="Year",y_label="Net Worth")
 
+    with col5:
+        pass
+
+
     with col6:
         col6.subheader("Expenses this week")
         r = col6.data_editor(
@@ -208,4 +213,6 @@ with yearly.container(border=True):
         ax1.pie(sizes2, labels=labels2, startangle=90)
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         col7.pyplot(fig1)
+
+
 
