@@ -20,9 +20,9 @@ thing = dict()
 
 weekly, monthly, yearly = st.tabs(["Weekly", "Monthly","Annually"])
 
-debt = 100000
+debt = 0 #int(st.number_input("Debt", 0))
 average_spending = 770
-income = 880
+income = 0 #int(st.number_input("Income", 0))
 
 random2 = random.randint(5,10)
 dates = range(2019, 2019+random2)
@@ -71,15 +71,17 @@ with weekly.container(border=True):
 
     with col1:
         col1.markdown("###### Total Debt");
-        col1.markdown(f"## ${debt}");
+        #col1.markdown(f"## ${debt}");
+        debt = int(st.number_input("Debt", 0))
 
     with col2:
         col2.markdown("###### Average Spending");
-        col2.markdown(f"## ${average_spending}");
+        average_spending = int(st.number_input("Average spending", 0))
 
     with col3:
         col3.markdown("###### Income");
-        col3.markdown(f"## ${income}");
+        income = int(st.number_input("Income", 0))
+        #col3.markdown(f"## ${income}");
 
     with col4:
         col4.subheader("Net Worth over Time")
