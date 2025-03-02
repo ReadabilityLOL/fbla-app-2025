@@ -7,7 +7,7 @@ import math
 import datetime
 from openai import OpenAI
 
-api_key = "7"
+api_key = "7" #replace with api key
 
 
 def merge_slices(list0, list1):
