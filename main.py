@@ -80,6 +80,45 @@ with weekly.container(border=True):
     with col4:
         col4.subheader("Net Worth over Time")
         col4.line_chart(thing,x_label="Year",y_label="Net Worth")
+    
+    with col5:
+
+        client = OpenAI(api_key=api_key)
+        
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
+        
+        col5.title("Chat with AI-CoPilot")
+        
+        total_debt = st.session_state.get("total_debt", 0.0)
+        monthly_expenses = st.session_state.get("expenses", 0.0)
+        
+        financial_context = (
+            f"Total Debt: ${total_debt}\n"
+            f"Monthly Expenses: ${monthly_expenses}\n"
+            "Consider this information when providing responses."
+        )
+        st.session_state["messages"][0]["content"] = financial_context
+        
+        chat_container = col5
+        for message in st.session_state["messages"]:
+            if message["role"] != "system":
+                with chat_container:
+                    col5.chat_message(message["role"]).write(message["content"])
+        user_input = col5.text_input("Type your message:", key="user_input4")
+        
+        if col5.button("Send",key="b2"):
+            if user_input:
+                st.session_state["messages"].append({"role": "user", "content": user_input})
+        
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=st.session_state["messages"]
+                )
+        
+                ai_message = response.choices[0].message.content
+                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
+                st.rerun() 
 
     with col6:
         col6.subheader("Expenses this week")
@@ -131,6 +170,43 @@ with monthly.container(border=True):
         col4.subheader("Net Worth over Time")
         col4.line_chart(thing,x_label="Year",y_label="Net Worth")
 
+    with col5:
+        client = OpenAI(api_key=api_key)
+        
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
+        
+        col5.title("Chat with AI-CoPilot")
+        
+        total_debt = st.session_state.get("total_debt", 0.0)
+        monthly_expenses = st.session_state.get("expenses", 0.0)
+        
+        financial_context = (
+            f"Total Debt: ${total_debt}\n"
+            f"Monthly Expenses: ${monthly_expenses}\n"
+            "Consider this information when providing responses."
+        )
+        st.session_state["messages"][0]["content"] = financial_context
+        
+        chat_container = col5
+        for message in st.session_state["messages"]:
+            if message["role"] != "system":
+                with chat_container:
+                    col5.chat_message(message["role"]).write(message["content"])
+        user_input = col5.text_input("Type your message:", key="user_input2")
+        
+        if col5.button("Send",key="b1"):
+            if user_input:
+                st.session_state["messages"].append({"role": "user", "content": user_input})
+        
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=st.session_state["messages"]
+                )
+        
+                ai_message = response.choices[0].message.content
+                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
+                st.rerun() 
     with col6:
         col6.subheader("Expenses this week")
         r = col6.data_editor(
@@ -184,7 +260,42 @@ with yearly.container(border=True):
         col4.line_chart(thing,x_label="Year",y_label="Net Worth")
 
     with col5:
-        pass
+        client = OpenAI(api_key=api_key)
+        
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
+        
+        col5.title("Chat with AI-CoPilot")
+        
+        total_debt = st.session_state.get("total_debt", 0.0)
+        monthly_expenses = st.session_state.get("expenses", 0.0)
+        
+        financial_context = (
+            f"Total Debt: ${total_debt}\n"
+            f"Monthly Expenses: ${monthly_expenses}\n"
+            "Consider this information when providing responses."
+        )
+        st.session_state["messages"][0]["content"] = financial_context
+        
+        chat_container = col5
+        for message in st.session_state["messages"]:
+            if message["role"] != "system":
+                with chat_container:
+                    col5.chat_message(message["role"]).write(message["content"])
+        user_input = col5.text_input("Type your message:", key="user_input")
+        
+        if col5.button("Send"):
+            if user_input:
+                st.session_state["messages"].append({"role": "user", "content": user_input})
+        
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=st.session_state["messages"]
+                )
+        
+                ai_message = response.choices[0].message.content
+                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
+                st.rerun() 
 
 
     with col6:
