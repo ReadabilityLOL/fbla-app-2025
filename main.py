@@ -18,7 +18,7 @@ def merge_slices(list0, list1):
     return list(dict_slices.values()), list(dict_slices.keys())
 thing = dict()
 
-weekly, monthly, yearly = st.tabs(["Weekly", "Monthly","Annually"])
+weekly = st.tabs(["Weekly"])[0]
 
 debt = 0 #int(st.number_input("Debt", 0))
 average_spending = 770
@@ -154,184 +154,184 @@ with weekly.container(border=True):
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         col7.pyplot(fig1)
 
-with monthly.container(border=True):
-    col1, col2, col3 = monthly.columns(3, border = True)
-    col4, col5 = monthly.columns([3,2], border = True)
-    col6, col7 = monthly.columns(2, border = True)
-
-    with col1:
-        col1.markdown("###### Total Debt");
-        col1.markdown("## $999999");
-        col1.markdown("*0.5% interest per month*");
-
-    with col2:
-        col2.markdown("###### Average Spending");
-        col2.markdown("## $77");
-        col2.markdown("*+3% from last month*");
-
-    with col3:
-        col3.markdown("###### Income");
-        col3.markdown("## $888");
-        col3.markdown("*+6% from last month*");
-
-    with col4:
-        col4.subheader("Net Worth over Time")
-        col4.line_chart(thing,x_label="Year",y_label="Net Worth")
-
-    with col5:
-        client = OpenAI(api_key=api_key)
-        
-        if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
-        
-        col5.title("Chat with AI-CoPilot")
-        
-        total_debt = st.session_state.get("total_debt", 0.0)
-        monthly_expenses = st.session_state.get("expenses", 0.0)
-        
-        financial_context = (
-            f"Total Debt: ${total_debt}\n"
-            f"Monthly Expenses: ${monthly_expenses}\n"
-            "Consider this information when providing responses."
-        )
-        st.session_state["messages"][0]["content"] = financial_context
-        
-        chat_container = col5
-        for message in st.session_state["messages"]:
-            if message["role"] != "system":
-                with chat_container:
-                    col5.chat_message(message["role"]).write(message["content"])
-        user_input = col5.text_input("Type your message:", key="user_input2")
-        
-        if col5.button("Send",key="b1"):
-            if user_input:
-                st.session_state["messages"].append({"role": "user", "content": user_input})
-        
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=st.session_state["messages"]
-                )
-        
-                ai_message = response.choices[0].message.content
-                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
-                st.rerun() 
-    with col6:
-        col6.subheader("Expenses this week")
-        r = col6.data_editor(
-            data_df,
-            hide_index=True,
-            num_rows="dynamic",
-            key="month-graph"
-        )
-
-        prices = r["Price"]
-        categories = r["Category"]
-    with col7:
-        
-        labels = categories
-        cleanse = lambda x: x if not math.isnan(x)  else 0;
-
-        sizes = [cleanse(x) for x in prices]
-
-        sizes2, labels2 = merge_slices(sizes, labels)
-
-        
-        fig1, ax1 = plt.subplots()
-        #ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)
-        ax1.pie(sizes2, labels=labels2, startangle=90)
-        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        col7.pyplot(fig1)
-
-
-with yearly.container(border=True):
-    col1, col2, col3 = yearly.columns(3, border = True)
-    col4, col5 = yearly.columns([3,2], border = True)
-    col6, col7 = yearly.columns(2, border = True)
-
-    with col1:
-        col1.markdown("###### Total Debt");
-        col1.markdown("## $999999");
-        col1.markdown("*0.5% interest per month*");
-
-    with col2:
-        col2.markdown("###### Average Spending");
-        col2.markdown("## $77");
-        col2.markdown("*+3% from last month*");
-
-    with col3:
-        col3.markdown("###### Income");
-        col3.markdown("## $888");
-        col3.markdown("*+6% from last month*");
-
-    with col4:
-        col4.subheader("Net Worth over Time")
-        col4.line_chart(thing,x_label="Year",y_label="Net Worth")
-
-    with col5:
-        client = OpenAI(api_key=api_key)
-        
-        if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
-        
-        col5.title("Chat with AI-CoPilot")
-        
-        total_debt = st.session_state.get("total_debt", 0.0)
-        monthly_expenses = st.session_state.get("expenses", 0.0)
-        
-        financial_context = (
-            f"Total Debt: ${total_debt}\n"
-            f"Monthly Expenses: ${monthly_expenses}\n"
-            "Consider this information when providing responses."
-        )
-        st.session_state["messages"][0]["content"] = financial_context
-        
-        chat_container = col5
-        for message in st.session_state["messages"]:
-            if message["role"] != "system":
-                with chat_container:
-                    col5.chat_message(message["role"]).write(message["content"])
-        user_input = col5.text_input("Type your message:", key="user_input")
-        
-        if col5.button("Send"):
-            if user_input:
-                st.session_state["messages"].append({"role": "user", "content": user_input})
-        
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=st.session_state["messages"]
-                )
-        
-                ai_message = response.choices[0].message.content
-                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
-                st.rerun() 
-
-
-    with col6:
-        col6.subheader("Expenses this week")
-        r = col6.data_editor(
-            data_df,
-            hide_index=True,
-            num_rows="dynamic",
-            key="year-graph"
-        )
-
-        prices = r["Price"]
-        categories = r["Category"]
-    with col7:
-        
-        labels = categories
-        cleanse = lambda x: x if not math.isnan(x)  else 0;
-
-        sizes = [cleanse(x) for x in prices]
-
-        sizes2, labels2 = merge_slices(sizes, labels)
-
-        
-        fig1, ax1 = plt.subplots()
-        #ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)
-        ax1.pie(sizes2, labels=labels2, startangle=90)
-        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        col7.pyplot(fig1)
-
-
-
+#with monthly.container(border=True):
+#    col1, col2, col3 = monthly.columns(3, border = True)
+#    col4, col5 = monthly.columns([3,2], border = True)
+#    col6, col7 = monthly.columns(2, border = True)
+#
+#    with col1:
+#        col1.markdown("###### Total Debt");
+#        col1.markdown("## $999999");
+#        col1.markdown("*0.5% interest per month*");
+#
+#    with col2:
+#        col2.markdown("###### Average Spending");
+#        col2.markdown("## $77");
+#        col2.markdown("*+3% from last month*");
+#
+#    with col3:
+#        col3.markdown("###### Income");
+#        col3.markdown("## $888");
+#        col3.markdown("*+6% from last month*");
+#
+#    with col4:
+#        col4.subheader("Net Worth over Time")
+#        col4.line_chart(thing,x_label="Year",y_label="Net Worth")
+#
+#    with col5:
+#        client = OpenAI(api_key=api_key)
+#        
+#        if "messages" not in st.session_state:
+#            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
+#        
+#        col5.title("Chat with AI-CoPilot")
+#        
+#        total_debt = st.session_state.get("total_debt", 0.0)
+#        monthly_expenses = st.session_state.get("expenses", 0.0)
+#        
+#        financial_context = (
+#            f"Total Debt: ${total_debt}\n"
+#            f"Monthly Expenses: ${monthly_expenses}\n"
+#            "Consider this information when providing responses."
+#        )
+#        st.session_state["messages"][0]["content"] = financial_context
+#        
+#        chat_container = col5
+#        for message in st.session_state["messages"]:
+#            if message["role"] != "system":
+#                with chat_container:
+#                    col5.chat_message(message["role"]).write(message["content"])
+#        user_input = col5.text_input("Type your message:", key="user_input2")
+#        
+#        if col5.button("Send",key="b1"):
+#            if user_input:
+#                st.session_state["messages"].append({"role": "user", "content": user_input})
+#        
+#                response = client.chat.completions.create(
+#                    model="gpt-4o-mini",
+#                    messages=st.session_state["messages"]
+#                )
+#        
+#                ai_message = response.choices[0].message.content
+#                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
+#                st.rerun() 
+#    with col6:
+#        col6.subheader("Expenses this week")
+#        r = col6.data_editor(
+#            data_df,
+#            hide_index=True,
+#            num_rows="dynamic",
+#            key="month-graph"
+#        )
+#
+#        prices = r["Price"]
+#        categories = r["Category"]
+#    with col7:
+#        
+#        labels = categories
+#        cleanse = lambda x: x if not math.isnan(x)  else 0;
+#
+#        sizes = [cleanse(x) for x in prices]
+#
+#        sizes2, labels2 = merge_slices(sizes, labels)
+#
+#        
+#        fig1, ax1 = plt.subplots()
+#        #ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)
+#        ax1.pie(sizes2, labels=labels2, startangle=90)
+#        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+#        col7.pyplot(fig1)
+#
+#
+#with yearly.container(border=True):
+#    col1, col2, col3 = yearly.columns(3, border = True)
+#    col4, col5 = yearly.columns([3,2], border = True)
+#    col6, col7 = yearly.columns(2, border = True)
+#
+#    with col1:
+#        col1.markdown("###### Total Debt");
+#        col1.markdown("## $999999");
+#        col1.markdown("*0.5% interest per month*");
+#
+#    with col2:
+#        col2.markdown("###### Average Spending");
+#        col2.markdown("## $77");
+#        col2.markdown("*+3% from last month*");
+#
+#    with col3:
+#        col3.markdown("###### Income");
+#        col3.markdown("## $888");
+#        col3.markdown("*+6% from last month*");
+#
+#    with col4:
+#        col4.subheader("Net Worth over Time")
+#        col4.line_chart(thing,x_label="Year",y_label="Net Worth")
+#
+#    with col5:
+#        client = OpenAI(api_key=api_key)
+#        
+#        if "messages" not in st.session_state:
+#            st.session_state["messages"] = [{"role": "system", "content": "You are a helpful AI assistant."}]
+#        
+#        col5.title("Chat with AI-CoPilot")
+#        
+#        total_debt = st.session_state.get("total_debt", 0.0)
+#        monthly_expenses = st.session_state.get("expenses", 0.0)
+#        
+#        financial_context = (
+#            f"Total Debt: ${total_debt}\n"
+#            f"Monthly Expenses: ${monthly_expenses}\n"
+#            "Consider this information when providing responses."
+#        )
+#        st.session_state["messages"][0]["content"] = financial_context
+#        
+#        chat_container = col5
+#        for message in st.session_state["messages"]:
+#            if message["role"] != "system":
+#                with chat_container:
+#                    col5.chat_message(message["role"]).write(message["content"])
+#        user_input = col5.text_input("Type your message:", key="user_input")
+#        
+#        if col5.button("Send"):
+#            if user_input:
+#                st.session_state["messages"].append({"role": "user", "content": user_input})
+#        
+#                response = client.chat.completions.create(
+#                    model="gpt-4o-mini",
+#                    messages=st.session_state["messages"]
+#                )
+#        
+#                ai_message = response.choices[0].message.content
+#                st.session_state["messages"].append({"role": "assistant", "content": ai_message})
+#                st.rerun() 
+#
+#
+#    with col6:
+#        col6.subheader("Expenses this week")
+#        r = col6.data_editor(
+#            data_df,
+#            hide_index=True,
+#            num_rows="dynamic",
+#            key="year-graph"
+#        )
+#
+#        prices = r["Price"]
+#        categories = r["Category"]
+#    with col7:
+#        
+#        labels = categories
+#        cleanse = lambda x: x if not math.isnan(x)  else 0;
+#
+#        sizes = [cleanse(x) for x in prices]
+#
+#        sizes2, labels2 = merge_slices(sizes, labels)
+#
+#        
+#        fig1, ax1 = plt.subplots()
+#        #ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)
+#        ax1.pie(sizes2, labels=labels2, startangle=90)
+#        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+#        col7.pyplot(fig1)
+#
+#
+#
